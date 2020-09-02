@@ -48,24 +48,56 @@ public:
         vector<int> solutionValues;
         // sum = l1.val + l2.val + carryOver
         // carryOver = sum % 10
-        while(l1 && l2) {
+        while(l1 != NULL && l2 != NULL) {
             sum = l1->val + l2->val + carryOver;
             resultValue = sum % 10;
             carryOver = sum / 10;
             cout << "\n sum: " << sum;
             cout << "\n carryOver: " << carryOver;
             cout << "\n resultValue: " << resultValue;
-            // solutionList->next->val = new ListNode(resultValue);
-            // solutionList->val = resultValue;
             solutionValues.push_back(resultValue);
             
-            l1 = l1->next; // now pointing to the next value; so it's like, [2,4,3] -> [4, 3] -> [3] -> []
+            // l1 = l1->next; // now pointing to the next value; so it's like, [2,4,3] -> [4, 3] -> [3] -> []
+            // so there's the possibility that they're different sizes
+            l1 = l1->next;
             l2 = l2->next;
         }
+        // expanding brain meme level logic here.
         ListNode* solutionList = new ListNode(solutionValues[0], nullptr);
-        solutionList->next = new ListNode(solutionValues[1], nullptr);
-        solutionList->next->next = new ListNode(solutionValues[2], nullptr);
+        cout << "\n whats the carryOver? " << carryOver;
+        // [5], [5]
+        // there's carry over
+        if (carryOver != 0) {
+            solutionList->next = new ListNode(carryOver, nullptr);
+        }
+        // l1 is shorter than l2 so add the last value of l2; ...assuming the diff is only 1 value *sigh*
+        if (l1 == NULL && l2 != NULL) {
+            sum = l2->val + carryOver;
+            resultValue = sum % 10;
+            carryOver = sum / 10;
+            solutionList->next = new ListNode(resultValue, nullptr);
+            if (carryOver != 0) {
+                solutionList->next->next = new ListNode(carryOver, nullptr);
+            }
+        }
+        // if l2 is shorter than l1
+        if (l2 == NULL && l1 != NULL) {
+            sum = l1->val + carryOver;
+            resultValue = sum % 10;
+            solutionList->next = new ListNode(resultValue, nullptr);
+            carryOver = sum / 10;
+            if (carryOver != 0) {
+                solutionList->next->next = new ListNode(carryOver, nullptr);
+            }
+        }
+        if (size(solutionValues) >= 2) {
+            solutionList->next = new ListNode(solutionValues[1], nullptr);
+        }
+        if (size(solutionValues) >= 3) {
+            solutionList->next->next = new ListNode(solutionValues[2], nullptr);
+        }
         
+    
         return solutionList;
     }
 };
